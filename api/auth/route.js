@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const Users = require('../users/model.js');
 
@@ -24,5 +25,37 @@ router.post('/register', async (req, res) => {
 		res.status(500).json({ message: 'Server error creating new user' });
 	}
 });
+
+router.post('/login', async (req, res) => {
+	let { username, password } = req.body;
+	try {
+		const user = await Users.findBy({ username }).first();
+		if (user && bcrypt.compareSync(password, user.password)) {
+			const token = generateToken(user);
+			res.status(200).json({
+				message: `Welcome ${user.username}`,
+				token,
+			});
+		} else {
+			res.status(401).json({ message: 'Invalid credentials' });
+		}
+	} catch (err) {
+		console.log(err);
+		res.status(500).json({ message: 'Server error while logging in' });
+	}
+});
+
+const generateToken = user => {
+	const payload = {
+		subject: user.id,
+		username: user.username,
+	};
+
+	const options = {
+		expiresIn: '30d',
+	};
+
+	return jwt.sign(payload, process.env.JWT_SECRET, options);
+};
 
 module.exports = router;
