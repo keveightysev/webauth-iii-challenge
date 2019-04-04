@@ -22,10 +22,15 @@ class Register extends React.Component {
 				this.state,
 			);
 			const res = await axios.post('http://localhost:4319/api/auth/login/', {
-				username: user.username,
-				password: user.password,
+				username: user.data.username,
+				password: this.state.password,
 			});
-			localStorage.setItem('token', res.data.token);
+			await this.setState({
+				username: '',
+				password: '',
+				role: '',
+			});
+			await localStorage.setItem('token', res.data.token);
 			this.props.history.push('/users');
 		} catch (err) {
 			console.log(err);
@@ -34,7 +39,7 @@ class Register extends React.Component {
 
 	render() {
 		return (
-			<form>
+			<form onSubmit={this.handleSubmit}>
 				<div>
 					<label htmlFor='username'>Enter a username</label>
 					<input
