@@ -1,6 +1,8 @@
 import React from 'react';
 import axios from 'axios';
 
+import Login from '../components/Login';
+
 axios.defaults.baseURL = 'http://localhost:4319/api';
 
 axios.interceptors.request.use(config => {
@@ -10,11 +12,10 @@ axios.interceptors.request.use(config => {
 
 export default function(Component) {
 	return function Authenticated(props) {
-		const notLoggedIn = <h2>Please log in to view the users</h2>;
 		return localStorage.getItem('token') ? (
 			<Component {...props} />
 		) : (
-			notLoggedIn
+			<Login {...props} />
 		);
 	};
 }
