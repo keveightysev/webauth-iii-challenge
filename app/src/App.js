@@ -7,6 +7,11 @@ import Login from './components/Login';
 import Users from './components/Users';
 
 class App extends React.Component {
+	logout = e => {
+		localStorage.removeItem('token');
+		window.location.reload();
+	};
+
 	render() {
 		return (
 			<>
@@ -18,6 +23,8 @@ class App extends React.Component {
 					<NavLink to='/login'>Log In</NavLink>
 					&nbsp; | &nbsp;
 					<NavLink to='/users'>Users</NavLink>
+					&nbsp; | &nbsp;
+					<button onClick={this.logout}>Log Out</button>
 				</header>
 				<main>
 					<Route path='/' exact component={Home} />
